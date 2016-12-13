@@ -1,0 +1,37 @@
+* maple-json
+  [[LICENSE][https://img.shields.io/badge/license-BSD-blue.svg]]
+  [[https://www.python.org/download/releases/3.0/][https://img.shields.io/badge/python-3.5-green.svg]]
+
+* How to use
+  it's simple to use(take flask-sqlalchemy as an example)
+
+** multi instances
+   #+BEGIN_SRC python
+   posts = Post.query.all()
+   serializer = Seralizer(posts,many=True)
+   data = serializer.data
+   #+END_SRC
+
+** single instance
+   #+BEGIN_SRC python
+   post = Post.query.first()
+   serializer = Seralizer(post,many=False)
+   data = serializer.data
+   #+END_SRC
+
+** exclude some columns
+   #+BEGIN_SRC python
+   serializer = Seralizer(post,exclude=['title'])
+   #+END_SRC
+
+** only include some column
+   #+BEGIN_SRC python
+   serializer = Seralizer(post,include=['title'])
+   #+END_SRC
+
+** relation depth
+   #+BEGIN_SRC python
+   serializer = Seralizer(post,depth=3)
+   #+END_SRC
+   - depth
+     default:2
