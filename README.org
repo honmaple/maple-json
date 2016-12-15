@@ -8,30 +8,30 @@
 ** multi instances
    #+BEGIN_SRC python
    posts = Post.query.all()
-   serializer = Seralizer(posts,many=True)
+   serializer = Serializer(posts,many=True)
    data = serializer.data
    #+END_SRC
 
 ** single instance
    #+BEGIN_SRC python
    post = Post.query.first()
-   serializer = Seralizer(post,many=False)
+   serializer = Serializer(post,many=False)
    data = serializer.data
    #+END_SRC
 
 ** exclude some columns
    #+BEGIN_SRC python
-   serializer = Seralizer(post,exclude=['title'])
+   serializer = Serializer(post,exclude=['title'])
    #+END_SRC
 
 ** only include some column
    #+BEGIN_SRC python
-   serializer = Seralizer(post,include=['title'])
+   serializer = Serializer(post,include=['title'])
    #+END_SRC
 
 ** relation depth
    #+BEGIN_SRC python
-   serializer = Seralizer(post,depth=3)
+   serializer = Serializer(post,depth=3)
    #+END_SRC
    - depth
      default:2
