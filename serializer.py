@@ -6,7 +6,7 @@
 # Author: jianglin
 # Email: xiyang0807@gmail.com
 # Created: 2016-12-13 22:08:23 (CST)
-# Last Update:星期二 2016-12-13 22:8:57 (CST)
+# Last Update:星期四 2016-12-15 23:32:27 (CST)
 #          By:
 # Description:
 # **************************************************************************
@@ -83,20 +83,26 @@ class Serializer(object):
                 children = getattr(instance, column)
                 if relation.lazy == 'dynamic':
                     children = children.all()
-                result[column] = Serializer(
-                    children,
-                    many=True,
-                    exclude=[relation.back_populates],
-                    depth=depth).data
+                if children:
+                    result[column] = Serializer(
+                        children,
+                        many=True,
+                        exclude=[relation.back_populates],
+                        depth=depth).data
+                else:
+                    result[column] = []
             else:
                 child = getattr(instance, column)
                 if relation.lazy == 'dynamic':
                     child = child.first()
-                result[column] = Serializer(
-                    child,
-                    many=False,
-                    exclude=[relation.back_populates],
-                    depth=depth).data
+                if child:
+                    result[column] = Serializer(
+                        child,
+                        many=False,
+                        exclude=[relation.back_populates],
+                        depth=depth).data
+                else:
+                    result[column] = {}
         return result
 
     def get_model_class(self, instance):
