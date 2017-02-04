@@ -35,3 +35,28 @@
    #+END_SRC
    - depth
      default:2
+
+** add some custom function
+   #+BEGIN_SRC python
+   serializer = Serializer(post,extra=['get_post_count'])
+   #+END_SRC
+   Post
+   #+BEGIN_SRC python
+     class Post(Model):
+         ......
+         def get_post_count(self):
+             return 11
+   #+END_SRC
+
+* Other
+  #+BEGIN_SRC python
+    class PostSerializer(Serializer):
+        count = Field(source = 'get_post_count',args={'name':'hello'},default=20)
+        class Meta:
+            include = []
+            depth = 2
+            include = []
+            exclude = []
+            extra = ['count']
+  #+END_SRC
+
