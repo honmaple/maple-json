@@ -6,7 +6,7 @@
 # Author: jianglin
 # Email: xiyang0807@gmail.com
 # Created: 2016-12-13 22:08:23 (CST)
-# Last Update:星期六 2017-2-4 23:49:15 (CST)
+# Last Update:星期日 2017-2-5 13:34:25 (CST)
 #          By:
 # Description:
 # **************************************************************************
@@ -22,25 +22,7 @@ class PageInfo(object):
 
     def as_dict(self):
         pageinfo = {
-            'items': True,
-            'pages': self.paginate.pages,
-            'has_prev': self.paginate.has_prev,
-            'page': self.paginate.page,
-            'has_next': self.paginate.has_next,
-            'iter_pages': list(
-                self.paginate.iter_pages(
-                    left_edge=1, left_current=2, right_current=3,
-                    right_edge=1))
-        }
-        return pageinfo
-
-class PageInfo(object):
-    def __init__(self, paginate):
-        self.paginate = paginate
-
-    def as_dict(self):
-        pageinfo = {
-            'items': True,
+            'items': self.paginate.items,
             'pages': self.paginate.pages,
             'has_prev': self.paginate.has_prev,
             'page': self.paginate.page,
