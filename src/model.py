@@ -6,7 +6,7 @@
 # Author: jianglin
 # Email: xiyang0807@gmail.com
 # Created: 2017-02-04 23:44:10 (CST)
-# Last Update:星期六 2017-2-4 23:45:33 (CST)
+# Last Update:星期三 2017-2-8 1:2:17 (CST)
 #          By:
 # Description:
 # **************************************************************************
@@ -53,7 +53,7 @@ class ModelMixin(object):
                   return_defaults=False,
                   update_changed_only=True):
         b = db.session.bulk_save_objects(
-            objects, return_defaults=False, update_changed_only=True)
+            objects, return_defaults=return_defaults, update_changed_only=update_changed_only)
         db.session.commit()
         return b
 
