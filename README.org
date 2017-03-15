@@ -2,7 +2,9 @@
   [[LICENSE][https://img.shields.io/badge/license-BSD-blue.svg]]
   [[https://www.python.org/download/releases/3.0/][https://img.shields.io/badge/python-3.5-green.svg]]
 
-* How to use
+* Serializer sqlachemy object to json
+  
+** usage
   it's simple to use(take flask-sqlalchemy as an example)
 
 ** multi instances
@@ -48,7 +50,7 @@
              return 11
    #+END_SRC
 
-* Other
+** Other
   #+BEGIN_SRC python
     class PostSerializer(Serializer):
         count = Field(source = 'get_post_count',args={'name':'hello'},default=20)
@@ -60,3 +62,75 @@
             extra = ['count']
   #+END_SRC
 
+  
+* Just use sqlalchemy like django orm
+  
+** base query(have finished)
+   - gt
+   - lt
+   - lte
+   - gte
+   - contains
+   - in
+   - exact
+   - iexact
+   - startswith
+   - istartswith
+   - iendswith
+   - endswith
+   - isnull
+   - range
+   - year
+   - month
+   - day
+
+   Example:
+   #+BEGIN_SRC python
+   Post.query.filter_by(title__contains = 'sql').all()
+   Post.query.exclude_by(title__contains = 'sql').all()
+   #+END_SRC
+   
+** relationship query
+   #+BEGIN_SRC python
+   Post.query.filter_by(tags__name__contains = 'sql').all()
+   #+END_SRC
+   
+** other
+   #+BEGIN_SRC python
+   Post.query.filter_by(tags__name__contains = 'sql').or(Post.id == 1,Post.id == 2).all()
+   Post.query.filter_by(tags__name__contains = 'sql').and(Post.id == 1,Post.id == 2).all()
+   Post.query.filter_by(tags__name__contains = 'sql').exists()
+   Post.query.load_only('title')
+   #+END_SRC
+   
+* Use sqlalchemy better
+  take flask-sqlalchemy as an example,you can remove part of the repetitive work by use *Mixin* of 'models.py'
+
+** ModelMixin
+   Increment ID -- id
+
+   #+BEGIN_SRC python
+   post = Post(·····)
+   post.save() 
+   post.delete()
+   #+END_SRC
+
+   bulk operation
+   - bulk_insert
+   - bulk_update
+   - bulk_save
+
+** ModelTimeMixin
+   - created_at
+     Data create time
+   - updated_at
+     Data update time
+
+** ModelUserMixin
+   relate to *User*(many to one)
+   #+BEGIN_SRC python
+     class Post(ModelUserMixin, Model):
+
+         user_related_name = 'posts'
+         titile = ...
+   #+END_SRC
