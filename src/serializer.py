@@ -6,7 +6,7 @@
 # Author: jianglin
 # Email: xiyang0807@gmail.com
 # Created: 2016-12-13 22:08:23 (CST)
-# Last Update:星期日 2017-2-5 13:34:25 (CST)
+# Last Update:星期日 2017-5-14 10:30:47 (CST)
 #          By:
 # Description:
 # **************************************************************************
@@ -76,8 +76,8 @@ class Serializer(object):
             self.extra = meta.extra
         # if not self.depth:
         #     self.depth = meta.depth if hasattr(meta, 'depth') else 2
-        if self.include and self.exclude:
-            raise ValueError('include and exclude can\'t work together')
+        # if self.include and self.exclude:
+        #     raise ValueError('include and exclude can\'t work together')
         if self.many:
             return self._serializerlist(self.instance, self.depth)
         return self._serializer(self.instance, self.depth)
@@ -130,31 +130,28 @@ class Serializer(object):
         relation_columns = self.get_relation_columns(inp)
         for relation in relation_columns:
             column = relation.key
+            serializer = Serializer
+            if hasattr(self, column):
+                serializer = getattr(self, column)
             if relation.direction in [ONETOMANY, MANYTOMANY
                                       ] and relation.uselist:
                 children = getattr(instance, column)
                 if relation.lazy == 'dynamic':
                     children = children.all()
-                if children:
-                    result[column] = Serializer(
-                        children,
-                        many=True,
-                        exclude=[relation.back_populates],
-                        depth=depth).data
-                else:
-                    result[column] = []
+                result[column] = serializer(
+                    children,
+                    many=True,
+                    exclude=[relation.back_populates],
+                    depth=depth).data if children else []
             else:
                 child = getattr(instance, column)
                 if relation.lazy == 'dynamic':
                     child = child.first()
-                if child:
-                    result[column] = Serializer(
-                        child,
-                        many=False,
-                        exclude=[relation.back_populates],
-                        depth=depth).data
-                else:
-                    result[column] = {}
+                result[column] = serializer(
+                    child,
+                    many=False,
+                    exclude=[relation.back_populates],
+                    depth=depth).data if child else {}
         return result
 
     def get_model_class(self, instance):
