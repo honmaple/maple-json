@@ -6,7 +6,7 @@
 # Author: jianglin
 # Email: xiyang0807@gmail.com
 # Created: 2016-12-13 22:08:23 (CST)
-# Last Update:星期日 2017-5-14 10:30:47 (CST)
+# Last Update:星期二 2017-8-8 10:46:38 (CST)
 #          By:
 # Description:
 # **************************************************************************
@@ -17,6 +17,10 @@ __all__ = ['PageInfo', 'Field', 'Serializer']
 
 
 class PageInfo(object):
+    '''
+    just for flask_sqlalchemy
+    '''
+
     def __init__(self, paginate):
         self.paginate = paginate
 
@@ -51,34 +55,28 @@ class Field(object):
 
 
 class Serializer(object):
-    def __init__(self,
-                 instance,
-                 many=False,
-                 include=[],
-                 exclude=[],
-                 extra=[],
-                 depth=2):
+    def __init__(self, instance, **kwargs):
+        meta = self.Meta
         self.instance = instance
-        self.many = many
-        self.depth = depth
-        self.include = include
-        self.exclude = exclude
-        self.extra = extra
+        self.depth = kwargs['depth'] if 'depth' in kwargs else meta.depth
+        self.include = kwargs[
+            'include'] if 'include' in kwargs else meta.include
+        self.exclude = kwargs[
+            'exclude'] if 'exclude' in kwargs else meta.exclude
+        self.extra = kwargs['extra'] if 'extra' in kwargs else meta.extra
+
+    def __new__(self, *args, **kwargs):
+        meta = self.Meta
+        for _meta in ['include', 'exclude', 'extra']:
+            if not hasattr(meta, _meta):
+                setattr(meta, _meta, [])
+        if not hasattr(meta, 'depth'):
+            setattr(meta, 'depth', 2)
+        return super(Serializer, self).__new__(self, *args, **kwargs)
 
     @property
     def data(self):
-        meta = self.Meta
-        if not self.include and hasattr(meta, 'include'):
-            self.include = meta.include
-        if not self.exclude and hasattr(meta, 'exclude'):
-            self.exclude = meta.exclude
-        if not self.extra and hasattr(meta, 'extra'):
-            self.extra = meta.extra
-        # if not self.depth:
-        #     self.depth = meta.depth if hasattr(meta, 'depth') else 2
-        # if self.include and self.exclude:
-        #     raise ValueError('include and exclude can\'t work together')
-        if self.many:
+        if isinstance(self.instance, list):
             return self._serializerlist(self.instance, self.depth)
         return self._serializer(self.instance, self.depth)
 
@@ -140,7 +138,6 @@ class Serializer(object):
                     children = children.all()
                 result[column] = serializer(
                     children,
-                    many=True,
                     exclude=[relation.back_populates],
                     depth=depth).data if children else []
             else:
@@ -149,7 +146,6 @@ class Serializer(object):
                     child = child.first()
                 result[column] = serializer(
                     child,
-                    many=False,
                     exclude=[relation.back_populates],
                     depth=depth).data if child else {}
         return result

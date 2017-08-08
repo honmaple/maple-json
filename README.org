@@ -10,14 +10,14 @@
 ** multi instances
    #+BEGIN_SRC python
    posts = Post.query.all()
-   serializer = Serializer(posts,many=True)
+   serializer = Serializer(posts)
    data = serializer.data
    #+END_SRC
 
 ** single instance
    #+BEGIN_SRC python
    post = Post.query.first()
-   serializer = Serializer(post,many=False)
+   serializer = Serializer(post)
    data = serializer.data
    #+END_SRC
 
